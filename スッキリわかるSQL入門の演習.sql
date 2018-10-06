@@ -476,3 +476,489 @@ SELECT DISTINCT K1.名義 AS 名義,
     ON K1.名義 = K2.名義
    AND K1.口座番号 <> K2.口座番号
  ORDER BY K1.名義, K1.口座番号;
+
+
+ --題材B
+ --1.
+ SELECT 商品コード,
+        商品名,
+        単価,
+        商品区分,
+        関連商品コード
+   FROM 商品;
+
+--2.
+SELECT 商品名
+  FROM 商品;
+
+--3.
+SELECT *
+  FROM 注文;
+
+--4.
+SELECT 注文番号,
+       注文枝番,
+       商品コード
+  FROM 注文;
+
+--5.省略
+
+--6.
+SELECT *
+  FROM 商品
+ WHERE 商品コード = 'W1252';
+
+--7.
+UPDATE 商品
+   SET 単価 = 500
+ WHERE 商品コード = 'S0023';
+
+--8.
+SELECT *
+  FROM 商品
+ WHERE 単価 <= 1000;
+
+--9.
+SELECT *
+  FROM 商品
+ WHERE 単価 >= 50000;
+
+--10.
+SELECT *
+  FROM 注文
+ WHERE 注文日 >= '2013-01-01';
+
+--11.
+SELECT *
+  FROM 注文
+ WHERE 注文日 < '2012-11-01';
+
+--12.
+SELECT *
+  FROM 商品
+ WHERE 商品区分 <> '1';
+
+--13.
+SELECT *
+  FROM 注文
+ WHERE クーポン割引料 IS NULL;
+
+--14.
+DELETE FROM 商品
+ WHERE 商品コード LIKE 'N%';
+
+--15.
+SELECT 商品コード,
+       商品名,
+       単価
+  FROM 商品
+ WHERE 商品名 LINE '%コート%';
+
+--16.
+SELECT 商品コード,
+       商品区分
+  FROM 商品
+ WHERE 商品区分 IN('2', '3', '9');
+
+--17.
+SELECT *
+  FROM 商品
+ WHERE 商品コド BETWEEN 'A0100' AND 'A0105';
+
+--18.
+SELECT *
+  FROM 注文
+ WHERE 商品コード IN('N0501', 'N1021', 'N0223');
+
+--19.
+SELECT *
+  FROM 商品
+ WHERE 商品区分 = '9'
+   AND 商品名 LIKE '%水玉%';
+
+--20.
+SELECT *
+  FROM 商品
+ WHERE 商品名 LIKE '%軽い%'
+    OR 商品名 LIKE '%ゆるふわ%';
+
+--21.
+SELECT *
+  FROM 商品
+ WHERE (商品区分 = '1' AND 単価 <= 3000)
+    OR (商品区分 = '9' AND 単価 >= 10000);
+
+--22.
+SELECT 商品コード
+  FROM 注文
+ WHERE 注文日 >= '2013-03-01' AND 注文日 < '2013-04-01'
+   AND 数量 >= 3;
+
+--23.
+SELECT *
+  FROM 注文
+ WHERE 数量 >= 10
+    OR クーポン利用料 IS NOT NULL;
+
+--24.省略
+
+--25.
+SELECT 商品コード,
+       商品名
+  FROM 商品
+ WHERE 商品区分 = '1'
+ ORDER BY 商品コード DESC;
+
+--26.
+SELECT 注文日,
+       注文番号,
+       注文枝番,
+       商品コード,
+       数量
+  FROM 注文
+ WHERE 注文日 >= '2013-03-01'
+ ORDER BY 1, 2, 3;
+
+--27.
+SELECT DISTINCT 商品コード
+  FROM 注文
+ ORDER BY 商品コード;
+
+--28.
+SELECT 注文日
+  FROM 注文
+ ORDER BY 注文日 DESC
+ LIMIT 10;
+
+--29.
+SELECT *
+  FROM 商品
+ ORDER BY 単価, 商品区分, 商品コード
+ LIMIT 15 OFFSET 6;
+
+--30.
+SELECT
+  FROM 廃番商品
+ WHERE 廃番日 >= '2011-12-01' AND 廃番日 < '2012-01-01'
+    OR 売上個数 >= 100
+ ORDER BY 売上個数 DESC;
+
+--31.
+SELECT 商品コード
+  FROM 商品 S
+ WHERE NOT EXISTS (SELECT *
+                     FROM 注文 T
+                    WHERE T.商品コード = S.商品コード)
+ ORDER BY 商品コード;
+
+--32.
+SELECT 商品コード
+  FROM 商品 S
+ WHERE EXISTS (SELECT *
+                 FROM 注文 T
+                WHERE T.商品コード = S.商品コード)
+ ORDER BY 商品コード DESC;
+
+--33.
+SELECT 商品コード,
+       商品名,
+       単価
+  FROM 商品
+ WHERE 商品区分 = '9'
+   AND (単価 <= 1000 OR 単価 > 10000)
+ ORDER BY 単価, 商品コード;
+
+--34.
+SELECT 商品コード,
+       単価,
+       TRUNC(単価 * 0.95) AS キャンペーン価格
+  FROM 商品
+ WHERE 商品区分 = '9'
+ ORDER BY 商品コード;
+
+--35.
+UPDATE 注文
+   SET クーポン割引料 = クーポン割引料 + 300
+ WHERE 注文日 BETWEEN '2013-03-12' AND '2013-03-14'
+   AND 数量 >= 2
+   AND クーポン割引料 IS NOT NULL;
+
+--36.
+UPDATE 注文
+   SET 数量 = 数量 - 1
+ WHERE 注文番号 = '201302250126';
+
+ --37.
+ SELECT 注文番号 || '-' || 注文枝番 AS 注文番号
+   FROM 注文
+  WHERE 注文番号 BETWEEN '201210010001' AND '201210319999';
+
+--38.
+SELECT DISTINCT
+       商品区分 AS 区分,
+       CASE WHEN 商品区分 = '1' THEN '衣類'
+            WHEN 商品区分 = '2' THEN '靴'
+            WHEN 商品区分 = '3' THEN '雑貨'
+            WHEN 商品区分 = '9' THEN '未分類'
+            ELSE '該当区分名なし'
+       END AS 区分名
+  FROM 商品;
+
+--39.
+SELECT 商品コード,
+       商品名,
+       単価,
+       CASE WHEN 単価 < 3000 THEN 'S'
+            WHEN 単価 >= 3000 AND 単価 < 10000 THEN 'M'
+            WHEN 単価 >= 10000 'L'
+            ELSE NULL
+       END AS 販売価格ランク,
+       商品区分
+  FROM 商品
+ ORDER BY 単価, 商品コード;
+
+ --40.
+ SELECT 商品名,
+        LENGTH(商品名) AS 文字数
+   FROM 商品
+  WHERE LENGTH(商品名) > 10
+  ORDER BY LENGTH(商品名);
+
+--41.
+SELECT 注文日,
+       SUBSTRING(注文番号, 9, 4) AS 注文番号
+  FROM 注文;
+
+--42.
+UPDATE 商品
+   SET 商品コード = REPLACE(商品コード, 'M', 'E')
+ WHERE 商品コード LIKE 'M%';
+
+ UPDATE 商品
+    SET 商品コード = 'E' || SUBSTRING(商品コード, 2, 4)
+  WHERE 商品コード LIKE 'M%';
+
+--43.
+SELECT SUBSTRING(注文番号, 9, 4) AS 連番
+  FROM 注文
+ WHERE SUBSTRING(注文番号, 9, 4) BETWEEN '1000' AND '2000'
+ ORDER BY SUBSTRING(注文番号, 9, 4);
+
+--44.省略
+
+--45.
+SELECT 商品コード,
+       商品名,
+       単価,
+       TRUNC(単価 * 0.7) AS 値下げした単価
+  FROM 商品
+ WHERE 単価 >= 10000;
+
+--46.
+SELECT SUM(数量) AS 合計
+  FROM 注文;
+
+--47.
+SELECT 日付,
+       SUM(数量) AS 合計
+  FROM 注文
+ GROUP BY 注文日
+
+--48.
+SELECT MIN(価格) AS 最小価格,
+       MAX(価格) AS 最大価格
+  FROM 商品
+ GROUP BY 商品区分;
+
+--49.
+SELECT SUM(数量) AS 合計
+  FROM 注文
+ GROUP BY 商品コード;
+
+--50.
+SELECT A.商品コード AS 商品コード,
+       A.合計 AS 合計
+ FROM (SELECT 商品コード,
+              SUM(数量) AS 合計
+         FROM 注文
+         GROUP BY 商品コード) A
+ORDER BY A.合計 DESC, A.商品コード
+LIMIT 10;
+
+--51.
+SELECT 商品コード,
+       SUM(数量) AS 数量
+  FROM 注文
+ GROUP BY 商品コード
+HAVING SUM(数量) < 5;
+
+--52.
+SELECT COUNT(CASE WHEN クーポン割引料 IS NOT NULL THEN 1
+                  ELSE 0
+             END) AS クーポン割引合計回数,
+       SUM(CASE WHEN クーポン割引料 IS NOT NULL THEN クーポン割引料
+                ELSE 0
+           END) AS クーポン割引合計
+  FROM 注文;
+
+--53.
+SELECT SUBSTRING(CAST(注文日 AS VARCHAR), 0, 5) || SUBSTRING(CAST(注文日 AS VARCHAR), 6, 2),
+       COUNT(*) AS 注文回数
+  FROM 注文
+ GROUP BY SUBSTRING(CAST(注文日 AS VARCHAR), 0, 5) || SUBSTRING(CAST(注文日 AS VARCHAR), 6, 2)
+ ORDER BY SUBSTRING(CAST(注文日 AS VARCHAR), 0, 5) || SUBSTRING(CAST(注文日 AS VARCHAR), 6, 2);
+
+--54.
+SELECT 商品コード,
+       SUM(数量) AS 注文数
+  FROM 注文
+ WHERE 商品コード LIKE 'Z%'
+ GROUP BY 商品コード
+HAVING SUM(数量) >= 100;
+
+--55.
+SELECT 商品コード,
+       商品名,
+       単価
+       (SELECT SUM(数量)
+          FROM 注文 T
+         WHERE T.商品コード = S.商品コード) AS 注文数
+  FROM 商品 S
+ WHERE 商品コード = 'S0604';
+
+ --56.
+ UPDATE 注文
+    SET 商品コード = (SELECT S.商品コード
+                      FROM 商品 S
+                     WHERE S.商品区分 = '2'
+                       AND S.商品名 LIKE '%ブーツ%'
+                       AND S.商品名 LIKE '%雨%'
+                       AND S.商品名 LIKE '%安心%')
+  WHERE 注文日 = '2013-03-15'
+    AND 注文番号 = 201303150014
+    AND 注文枝番 = 1;
+
+--57.
+SELECT T.注文日,
+       T.商品コード
+  FROM 注文 T
+ WHERE T.商品コード IN (SELECT S.商品コード
+                         FROM 商品 S
+                        WHERE S.商品名 LIKE '%あったか%')
+ ORDER BY 注文日;
+
+ --58.
+SELECT 商品コード,
+       SUM(数量) AS 販売数
+  FROM 注文
+ GROUP BY 商品コード
+HAVING SUM(数量) >ALL (SELECT AVG(数量)
+                        FROM 注文
+                       GROUP BY 商品コード);
+
+--59.
+SELECT A.合計販売数 AS 割引による販売数,
+       (A.割引額合計 / A.合計販売数) AS 平均割引額
+  FROM (SELECT SUM(数量) AS 合計販売数,
+               SUM(クーポン割引料) AS 割引額合計
+          FROM 注文
+         WHERE 商品コード = 'W0746'
+           AND クーポン割引料 IS NOT NULL) A;
+
+--60.
+INSERT INTO 注文
+SELECT '2013-03-21' AS 注文日,
+       '20130321008' AS 注文番号,
+	     (SELECT MAX(注文枝番) + 1
+          FROM 注文
+         WHERE 注文番号 = '201303210080') AS 注文枝番,
+       'S1003' AS 商品コード,
+       1 AS 数量,
+       NULL AS クーポン割引料;
+
+--61.
+SELECT T.注文日 AS 注文日,
+       T.注文番号 AS 注文番号,
+       T.注文枝番 AS 注文枝番,
+       T.商品コード AS 商品コード,
+       S.商品名 AS 商品名
+  FROM 注文 T INNER JOIN 商品 S
+    ON S.商品コード = T.商品コード
+ WHERE T.注文番号 = '201301130115';
+
+ --62.
+SELECT (H.単価 * T.数量) AS 合計販売額
+  FROM 注文 T INNER JOIN 廃盤商品 H
+    ON H.商品コード = T.商品コード
+ WHERE T.商品コード = 'A0009'
+   AND T.注文日 > H.廃番日;
+
+--63.
+SELECT (T.数量 * S.単価) AS 売上金額
+  FROM 商品 S INNER JOIN 注文 T
+    ON T.商品コード = S.商品コード
+ WHERE S.商品コード = 'S0604'
+  ORDER BY T.注文日;
+
+--64.
+SELECT S.商品コード AS 商品コード,
+       S.商品名 AS 商品名
+  FROM 商品 S
+ WHERE EXISTS (SELECT *
+                 FROM 注文 T
+                WHERE T.商品コード = S.商品コード
+                  AND (T.注文日 >= '2011-08-01' AND T.注文日 < '2011-09-01'));
+
+--65.
+SELECT T.商品コード AS 商品コード,
+       COALESCE(S.商品名, '廃番') AS 商品名
+  FROM 注文 T LEFT OUTER JOIN 商品 S
+    ON S.商品コード = T.商品コード
+ WHERE (T.注文日 >= '2011-08-01' AND T.注文日 < '2011-09-01');
+
+--66.
+SELECT T.注文日 AS 注文日,
+       S.商品コード || ':' || S.商品名 AS 商品名,
+       COALESCE(T.数量, 0) AS 数量
+  FROM 商品 S LEFT OUTER JOIN 注文 T
+    ON T.商品コード = S.商品コード
+ WHERE S.商品区分 = '9';
+
+--67.
+SELECT T.注文日 AS 注文日,
+       '商品コード' || ':' || COALESCE(S.商品名, '廃番') AS 商品名,
+       COALESCE(T.数量, 0) AS 数量
+  FROM 注文 T FULL OUTER JOIN 商品 S
+    ON S.商品コード = T.商品コード
+ WHERE S.商品区分 = '3';
+
+--68.
+SELECT T.注文日 AS 注文日,
+       T.注文番号 AS 注文番号,
+       T.注文枝番 AS 注文枝番,
+       (S.商品コード, H.商品コード) AS 商品コード,
+       (S.商品名, H.商品名) AS 商品名,
+       ((COALESCE(S.単価, H.単価) * T.数量) - COALESCE(T.クーポン割引料, 0)) AS 注文金額
+   FROM 注文 T LEFT OUTER JOIN 商品 S
+    ON S.商品コード = T.商品コード
+ LEFT OUTER JOIN 廃番商品 H
+    ON H.商品コード = T.商品コード
+ WHERE T.注文番号 = '201204030010';
+
+--69.
+SELECT S.商品コード AS 商品コード,
+       COALESCE(T.販売数, 0) AS 売上個数,
+       (S.単価 * COALESCE(T.販売数, 0)) AS 総売上金額
+  FROM 商品 S LEFT OUTER JOIN (SELECT 商品コード,
+                                SUM(数量) AS 販売数
+                                FROM 注文
+                               GROUP BY 商品コード) T
+    ON T.商品コード = S.商品コード
+ WHERE S.商品コード LIKE 'B%';
+
+--70.
+SELECT S.商品名 AS 商品名,
+       K.商品名 AS 関連商品名
+  FROM 商品 S INNER JOIN 商品 K
+    ON K.商品コード = S.関連商品コード
+ WHERE S.関連商品コード IS NOT NULL;
