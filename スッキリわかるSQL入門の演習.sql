@@ -962,3 +962,512 @@ SELECT S.商品名 AS 商品名,
   FROM 商品 S INNER JOIN 商品 K
     ON K.商品コード = S.関連商品コード
  WHERE S.関連商品コード IS NOT NULL;
+
+
+ -- 題材C
+ --1.
+ SELECT ID,
+        名称,
+        職業コード,
+        HP,
+        MP,
+        状態コード
+   FROM パーティー;
+
+--2.
+SELECT 名称 AS 名前,
+       HP AS 現在のHP,
+       MP AS 現在のMP,
+  FROM パーティー;
+
+--3.
+SELECT *
+  FROM イベント;
+
+--4.
+SELECT イベント番号 AS 番号,
+       イベント名称 AS　場面
+  FROM イベント;
+
+--5.省略
+
+--6.
+SELECT *
+  FROM パーティー
+ WHERE ID = 'C02';
+
+--7.
+UPDATE パーティー
+   SET HP = 120
+ WHERE ID = 'A01';
+
+--8.
+SELECT ID,
+       名称,
+       HP
+  FROM パーティー
+ WHERE HP < 100;
+
+--9.
+SELECT ID,
+       名称,
+       MP
+  FROM パーティー
+ WHERE MP >= 100;
+
+--10.
+SELECT イベント番号,
+       イベント名称,
+       タイプ
+  FROM イベント
+ WHERE タイプ <> 3;
+
+--11.
+SELECT イベント番号,
+       イベント名称
+  FROM イベント
+ WHERE イベント番号 <= 5;
+
+--12.
+SELECT イベント番号,
+       イベント名称
+  FROM イベント
+ WHERE イベント番号 >= 20;
+
+--13.
+SELECT イベント番号,
+       イベント名称
+  FROM イベント
+ WHERE 前提イベント番号 IS NULL;
+
+--14.
+SELECT イベント番号,
+       イベント名称,
+       後続イベント番号
+  FROM イベント
+ WHERE 後続イベント番号 IS NOT NULL;
+
+--15.
+UPDATE パーティー
+   SET 状態コード = '01'
+ WHERE 名称 LIKE '%ミ%';
+
+--16.
+SELECT ID,
+       名称,
+       HP
+  FROM パーティー
+ WHERE HP BETWEEN 120 AND 160;
+
+--17.
+SELECT 名称,
+       職業コード
+  FROM パーティー
+ WHERE 職業コード IN ('01', '10', '11');
+
+--18.
+SELECT 名称,
+       状態コード
+  FROM パーティー
+ WHERE 状態コード NOT IN ('00', '09');
+
+--19.
+SELECT *
+  FROM パーティー
+ WHERE HP > 100
+   AND MP > 100;
+
+--20.
+SELECT *
+  FROM パーティー
+ WHERE ID LIKE 'A%'
+   AND SUBSTRING(職業コード, 0, 1) = '2';
+
+--21.
+SELECT *
+  FROM イベント
+ WHERE タイプ = '1'
+   AND 前提イベント番号 IS NOT NULL
+   AND 後続イベント番号 IS NOT NULL;
+
+--22. 省略
+
+--23.
+SELECT DISTINCT 状態コード
+  FROM パーティー;
+
+--24.
+SELECT ID,
+       名称
+  FROM パーティー
+ ORDER BY ID;
+
+--25.
+SELECT 名称,
+       職業コード
+  FROM パーティー
+ ORDER BY 名称 DESC;
+
+--26.
+SELECT 名称,
+       HP,
+       状態コード
+  FROM パーティー
+ ORDER BY 状態コード, HP DESC;
+
+--27.
+SELECT タイプ,
+       イベント番号,
+       イベント名称,
+       前提イベント番号,
+       後続イベント番号
+  FROM イベント
+ ORDER BY 1, 2;
+
+--28.
+SELECT *
+  FROM パーティー
+ ORDER BY HP DESC
+ LIMIT 3;
+
+--29.
+SELECT *
+  FROM パーティー
+ ORDER BY MP DESC
+ LIMIT 1 OFFSET 2;
+
+--30.
+SELECT CASE WHEN SUBSTRING(職業コード, 0, 1) = '1' THEN 'S'
+            WHEN SUBSTRING(職業コード, 0, 1) = '2' THEN 'M'
+            ELSE 'A'
+       END AS 職業区分,
+       職業コード,
+       ID,
+       名称
+  FROM パーティー
+ ORDER BY 職業コード;
+
+--31.
+SELECT イベント番号
+  FROM イベント
+ WHERE NOT EXISTS (SELECT *
+                     FROM 経験イベント
+                    WHERE イベント番号 = イベント.イベント番号)
+ ORDER BY イベント番号;
+
+--32.
+SELECT イベント番号
+  FROM イベント
+ WHERE タイプ = '2'
+INTERSECT
+SELECT イベント番号
+  FROM 経験イベント
+ WHERE クリア区分 = '1';
+
+--33.
+SELECT 名称 AS なまえ,
+       HP AS 現在のHP,
+       CASE WHEN 職業コード IN ('11', '21') THEN HP + 50
+            ELSE HP
+       END 装備後のHP
+  FROM パーティー;
+
+--34.
+UPDATE パーティー
+   SET MP = MP + 20
+ WHERE ID IN ('A01', 'A03');
+
+--35.
+SELECT 名称,
+       現在のHP,
+       HP * 2 AS 予想されるダメージ
+  FROM パーティー
+ WHERE 職業コード = '11';
+
+--36.
+SELECT 名称 AS 名前,
+       HP || '/' || MP AS HPとMP,
+       CASE WHEN 状態コード = '00' THEN '異常なし'
+            WHEN 状態コード = '01' THEN '眠り'
+            WHEN 状態コード = '02' THEN '毒'
+            WHEN 状態コード = '03' THEN '沈黙'
+            WHEN 状態コード = '04' THEN '混乱'
+            WHEN 状態コード = '09' THEN '気絶'
+            ELSE ''
+       END AS ステータス
+  FROM パーティー;
+
+--37.
+SELECT イベント番号,
+       イベント名称,
+       CASE WHEN タイプ = '1' THEN '強制'
+            WHEN タイプ = '2' THEN 'フリー'
+            WHEN タイプ = '3' THEN '特殊'
+            ELSE 'その他'
+       END タイプ,
+       CASE WHEN イベント番号 BETWEEN 1 AND 10 THEN '序盤'
+            WHEN イベント番号 BETWEEN 11 AND 17 THEN '中盤'
+            ELSE '終盤'
+       END AS 発生時期
+  FROM イベント;
+
+--38.
+SELECT 名称 AS 名前,
+       HP AS 現在のHP,
+       LENGTH(名称) * 10 AS 予想ダメージ
+  FROM パーティー;
+
+--39.
+UPDATE パーティー
+   SET 状態コード = '04'
+ WHERE (HP % 4) = 0
+    OR (MP % 4) = 0;
+
+--40.
+SELECT TRUNC(777 * 0.7) AS 支払金額;
+
+--41.
+UPDATE パーティー
+   SET HP = ROUND(HP * 1.3),
+       MP = ROUND(HP * 1.3);
+
+--42.
+SELECT 名称 AS 名前,
+       HP,
+       POWER(HP, 0) AS 攻撃1回目,
+       POWER(HP, 1) AS 攻撃2回目,
+       POWER(HP, 2) AS 攻撃3回目
+  FROM パーティー;
+
+--43.
+SELECT 名称 AS なまえ,
+       HP,
+       状態コード,
+       CASE WHEN HP <= 50 THEN 3
+            WHEN HP >= 51 AND HP >=100 THEN 2
+            WHEN HP >= 101 AND HP <= 150 THEN 1
+            ELSE 0
+       END + CAST(状態コード AS INTEGER) AS リスク値
+  FROM パーティー
+ ORDER BY リスク値 DESC, HP;
+
+--44.
+SELECT COALESCE(前提イベント番号, '前提なし') AS 前提イベント番号,
+       イベント番号,
+       COALESCE(後続イベント番号, '後続なし') AS 後続イベント番号
+  FROM イベント;
+
+--45.
+SELECT MAX(HP) AS 最大HP,
+       MIN(HP) AS 最小HP,
+       MAX(MP) AS 最大MP,
+       MIN(MP) AS 最小MP
+  FROM パーティー;
+
+--46.
+SELECT CASE WHEN タイプ = '1' THEN '強制'
+            WHEN タイプ = '2' THEN 'フリー'
+            WHEN タイプ = '3' THEN '特殊',
+       COUNT(イベント番号) AS イベント数
+  FROM イベント
+ GROUP BY タイプ;
+
+--47.
+SELECT クリア区分,
+       COUNT(イベント番号) AS イベント数
+  FROM 経験イベント
+ GROUP BY クリア区分
+ ORDER BY クリア区分;
+
+--48.
+SELECT CASE WHEN SUM(MP) < 500 THEN '敵は見とれている'
+            WHEN SUM(MP) >= 500 ANS SUM(MP) < 1000 THEN '敵は呆然としている'
+            WHEN SUM(MP) >= 1000 THEN '敵はひれ伏している'
+            ELSE NULL
+       END AS 敵の行動
+  FROM パーティー;
+
+--49.
+SELECT CASE WHEN クリア結果 = '1' THEN 'クリアした'
+            ELSE 'クリアしてない'
+       END AS 区分,
+       COUNT(イベント番号) AS イベント数
+  FROM 経験イベント
+ GROUP BY クリア結果;
+
+--50.
+SELECT SUBSTRING(職業コード, 0, 1),
+       MAX(HP) AS 最大HP,
+       MIN(HP) AS 最小HP,
+       AVG(HP) AS 平均HP,
+       MAX(MP) AS 最大MP,
+       MIN(MP) AS 最小MP,
+       AVG(MP) AS 平均MP
+  FROM パーティー
+ GROUP BY SUBSTRING(職業コード, 0, 1);
+
+--51.
+SELECT SUBSTRING(ID, 0, 1),
+       AVG(HP) AS HPの平均,
+       AVG(MP) AS MPの平均
+  FROM パーティー
+ GROUP BY SUBSTRING(ID, 0, 1)
+HAVING AVG(HP) > 100;
+
+--52.
+SELECT SUM(CASE WHEN HP < 100 THEN 1
+                WHEN HP >= 100 AND HP < 150 THEN 2
+                WHEN HP >= 150 AND HP < 200 THEN 3
+                WHEN HP >= 200 THEN 5
+                ELSE 0
+            END) AS 開けられる扉の数
+  FROM パーティー;
+
+--53.
+SELECT ROUND(SUM(Y.HP) / (SELECT SUM(HP) FROM パーティー)) * 100
+  FROM パーティー Y
+ WHERE 職業コード = '01';
+
+--54.
+UPDATE パーティー P1
+   SET MP = MP + (SELECT ROUND(SUM(P2.HP) * 0.1)
+                    FROM パーティー P2
+                   WHERE P2.職業コード <> '20')
+ WHERE 職業コード = '20';
+
+--55.
+SELECT 経験イベント.イベント番号 AS イベント番号,
+       経験イベント.クリア結果 AS クリア結果
+  FROM 経験イベント
+ WHERE EXISTS (SELECT *
+                 FROM イベント
+                WHERE イベント.イベント番号 = 経験イベント.イベント番号
+                  AND タイプ IN ('1', '3'))
+
+--56.
+SELECT 名称,
+       MP
+  FROM パーティー
+ WHERE MP = (SELECT MAX(MP) FROM パーティー);
+
+--57.
+SELECT イベント番号,
+       名称
+  FROM イベント
+ WHERE イベント番号 NOT IN (SELECT　イベント番号 FROM 経験イベント)
+ ORDER BY イベント番号;
+
+--58.
+SELECT COUNT(イベント番号)
+  FROM イベント
+ WHERE イベント番号 NOT IN (SELECT　イベント番号 FROM 経験イベント);
+
+--59.
+SELECT イベント番号,
+       名称
+  FROM イベント
+ WHERE イベント番号 < ALL (SELECT イベント番号
+                           FROM 経験イベント
+                          WHERE ルート番号 = '5');
+
+--60.
+SELECT イベント番号,
+       名称,
+       前提イベント番号
+  FROM イベント
+ WHERE 前提イベント番号 IN (SELECT イベント番号
+                           FROM 経験テーブル
+                          WHERE クリア区分 = '1');
+
+--61.省略
+
+--62.
+SELECT KE.ルート番号 AS ルート番号,
+       KE.イベント番号 AS イベント番号,
+       E.名称 AS イベント名称,
+       KE.クリア結果 AS クリア結果
+  FROM 経験イベント KE INNER JOIN イベント E
+    ON KE.イベント番号 = E.イベント番号
+ WHERE KE.クリア区分 = '1'
+ ORDER BY KE.ルート番号;
+
+--63.
+SELECT E.イベント番号 AS イベント番号,
+       E.イベント名称 AS イベント名称,
+       KE.クリア区分 AS クリア区分
+  FROM イベント E INNER JOIN 経験イベント KE
+    ON KE.イベント番号 = E.イベント番号
+ WHERE E.タイプ = '1'
+
+--64.
+SELECT E.イベント番号 AS イベント番号,
+       E.イベント名称 AS イベント名称,
+       COALESCE(KE.クリア区分, '未クリア') AS クリア区分
+  FROM イベント E LEFT OUTER JOIN 経験イベント KE
+    ON E.イベント番号 = KE.イベント番号
+ WHERE E.タイプ = '1';
+
+--65.
+SELECT P.ID AS ID,
+       P.名称 AS 名前,
+       C1.コード名称 AS 職業,
+       C2.コード名称 AS 状態
+  FROM パーティー P INNER JOIN (SELECT コード値, コード名称
+                                FROM コード
+                               WHERE コード種別 = '1') C1
+    ON C1.コード値 = P.職業コード
+ INNER JOIN (SELECT コード値, コード名称
+               FROM コード
+              WHERE コード種別 = '2') C2
+    ON C2.コード値 = P.状態コード
+ ORDER BY P.ID;
+
+--66.
+SELECT P.ID,
+       COALESCE(P.名称, '仲間になっていない!') AS なまえ,
+       C1.コード名称 AS 職業
+  FROM パーティー P RIGHT OUTER JOIN (SELECT コード値, コード名称
+                                   FROM コード
+                                  WHERE コード種別 = '1') C1
+    ON P.職業コード = C1.コード値;
+
+--67.
+SELECT KE.イベント番号 AS イベント番号,
+       KE.クリア区分 AS クリア区分,
+       C1.コード名称 AS クリア結果
+  FROM 経験イベント KE FULL OUTER JOIN (SELECT コード値, コード名称
+                                  FROM コード
+                                 WHERE コード種別 = '4') C1
+    ON KE.クリア結果 = C1.コード値;
+
+
+--68.
+SELECT E1.イベント番号 AS イベント番号,
+       E1.名称 AS イベント名称,
+       E2.イベント番号 AS 前提イベント番号,
+       E2.名称 AS 前提イベント名称
+  FROM イベント E1 LEFT OUTER JOIN イベント E2
+    ON E1.前提イベント番号 = E2.イベント番号
+ WHERE E1.前提イベント番号 IS NOT NULL;
+
+--69.
+SELECT E1.イベント番号 AS イベント番号,
+       E1.名称 AS イベント名称,
+       E2.イベント番号 AS 前提イベント番号,
+       E2.名称 AS 前提イベント名称,
+       E3.イベント番号 AS 後続イベント番号,
+       E3.名称 AS 後続イベント名称
+  FROM イベント E1 LEFT OUTER JOIN イベント E2
+    ON E1.前提イベント番号 = E2.イベント番号
+  LEFT OUTER JOIN イベント E3
+    ON E.1.後続イベント番号 = E3.後続イベント番号
+ WHERE E1.前提イベント番号 IS NOT NULL
+    OR E1.後続イベント番号 IS NOT NULL;
+
+--70.
+SELECT E2.イベント番号 AS イベント番号,
+       E2.名称 AS イベント名称,
+       COUNT(E1.イベント番号) AS 前提イベント数
+  FROM イベントE1 INNER JOIN イベント E2
+    ON E1.前提イベント番号 = E2.イベント番号
+ GROUP BY E2.イベント番号, E2.名称;
